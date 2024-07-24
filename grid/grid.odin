@@ -4,6 +4,7 @@ import rl "vendor:raylib"
 import "core:math/rand"
 import "core:math"
 
+
 // Grid
 Grid :: struct {
     width, height: int,
@@ -68,12 +69,13 @@ get_input :: proc(g : ^Grid) {
     }
 }
 
+sand_stickness : f32 = 0.4
 drop_sand :: proc(g : ^Grid) {
     new_cells := make([][]CELL_TYPE, g.width)
     for i in 0..< g.width {
         new_cells[i] = make([]CELL_TYPE, g.height)
     }
-    for i in 0..< g.width {
+    for i in 1..< g.width -1 {
         for j in 0..< g.height {
             cell := g.cells[i][j]
             if cell == CELL_TYPE.SAND {
@@ -83,7 +85,40 @@ drop_sand :: proc(g : ^Grid) {
                         new_cells[i][j+1] = CELL_TYPE.SAND
                     }
                     else if g.cells[i][j+1] == CELL_TYPE.SAND{
-                        new_cells[i][j] = CELL_TYPE.SAND
+                        if g.cells[i-1][j+1] == CELL_TYPE.EMPTY && g.cells[i+1][j+1] == CELL_TYPE.EMPTY {
+                            if rand.float32() < sand_stickness {
+                                new_cells[i][j] = CELL_TYPE.EMPTY
+                                if rand.float32() < 0.5 {
+                                    new_cells[i-1][j+1] = CELL_TYPE.SAND
+                                } else {
+                                    new_cells[i+1][j+1] = CELL_TYPE.SAND
+                                }
+                            }
+                            else {
+                                new_cells[i][j] = CELL_TYPE.SAND
+                            }
+                        }
+                        else if g.cells[i-1][j+1] == CELL_TYPE.EMPTY {
+                            if rand.float32() < sand_stickness {
+                                new_cells[i][j] = CELL_TYPE.EMPTY
+                                new_cells[i-1][j+1] = CELL_TYPE.SAND
+                            }
+                            else {
+                                new_cells[i][j] = CELL_TYPE.SAND
+                            }
+                        }
+                        else if g.cells[i+1][j+1] == CELL_TYPE.EMPTY {
+                            if rand.float32() < sand_stickness {
+                                new_cells[i][j] = CELL_TYPE.EMPTY
+                                new_cells[i+1][j+1] = CELL_TYPE.SAND
+                            }
+                            else {
+                                new_cells[i][j] = CELL_TYPE.SAND
+                            }
+                        }
+                        else{
+                            new_cells[i][j] = CELL_TYPE.SAND
+                        }
                     } 
                 } else {
                     new_cells[i][j] = CELL_TYPE.SAND
@@ -91,11 +126,11 @@ drop_sand :: proc(g : ^Grid) {
             }
         }
     }
-    //delete g.cells
-    // for col in g.cells {
-    //     delete(col)
-    // }
-    // delete(g.cells)
+    
+    for col in g.cells {
+        delete(col)
+    }
+    delete(g.cells)
     g.cells = new_cells
 }
 
@@ -111,7 +146,7 @@ Draw :: proc(g : ^Grid) {
             height := g.blockSize - 1
             color := rl.BLACK
             if cell == CELL_TYPE.SAND {
-                color = rl.WHITE
+                color = rl.ORANGE
             }
             rl.DrawRectangle(i32(f32(i) * g.blockSize + g.offset_pos.x), i32(f32(j) * g.blockSize + g.offset_pos.y), i32(g.blockSize) -1, i32(g.blockSize) - 1, color)
         }
