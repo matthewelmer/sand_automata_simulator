@@ -10,3 +10,6 @@ https://www.youtube.com/watch?v=5Ka3tbbT-9E
 
 https://www.youtube.com/watch?v=ArcHpsTXhb0
 
+Left Mouse Button to drop sand
+
+<img width="498" alt="2024-07-24 22_05_21-grid odin - Untitled (Workspace) - Visual Studio Code" src="https://github.com/user-attachments/assets/522ad7cd-f5e5-47ee-92ca-7ff5f59b1a19">
